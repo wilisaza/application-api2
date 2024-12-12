@@ -1,0 +1,156 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model PlatApplication {
+  id                        String                      @id @default(uuid()) @db.Uuid
+  shortName                 String?                     @db.VarChar(45)
+  fullName                  String?                     @db.VarChar(45)
+  urlLogo                   String?                     @db.VarChar(245)
+  urlMain                   String?                     @db.VarChar(245)
+  idCompany                 String                      @db.Uuid
+  isEnabled                 Boolean?                    @default(true)
+  isDeleted                 Boolean?                    @default(false)
+  createdAt                 DateTime?                   @default(now())
+  updatedAt                 DateTime?                   @db.Timestamp(6)
+  applicationSpecs          Json?
+  PlatClient                PlatClient[]
+  PlatComponent             PlatComponent[]
+  PlatMenuApp               PlatMenuApplication[]
+  PlatMetaDataApplication   PlatMetaDataApplication[]
+  PlatApplicationPrivileges PlatApplicationPrivileges[]
+}
+
+model PlatApplicationPrivileges {
+  id              String          @id @default(uuid()) @db.Uuid
+  idApplication   String          @db.Uuid
+  sid             String          @db.VarChar(50)
+  name            String          @db.VarChar(50)
+  description     String?         @db.VarChar(200)
+  isEnabled       Boolean?        @default(true)
+  isDeleted       Boolean?        @default(false)
+  createdAt       DateTime?       @default(now())
+  updatedAt       DateTime?       @db.Timestamp(6)
+  PlatApplication PlatApplication @relation(fields: [idApplication], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fkPlatAppPrivPlatApplication1")
+
+  @@unique([idApplication, sid])
+}
+
+model PlatClient {
+  id              String           @id @default(uuid()) @db.Uuid
+  shortName       String?          @db.VarChar(45)
+  description     String?
+  idApplication   String           @db.Uuid
+  idCompany       String           @db.Uuid
+  isEnabled       Boolean?         @default(true)
+  isDeleted       Boolean?         @default(false)
+  createdAt       DateTime?        @default(now())
+  updatedAt       DateTime?        @db.Timestamp(6)
+  clientSpecs     Json?
+  PlatApplication PlatApplication  @relation(fields: [idApplication], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fkPlatClientPlatApplication1")
+  PlatUserClient  PlatUserClient[]
+  PlatMenuClient  PlatMenuClient[]
+}
+
+model PlatComponent {
+  id              String          @id @default(uuid()) @db.Uuid
+  idApplication   String          @db.Uuid
+  description     String?
+  idComponent     String          @db.Uuid
+  componentType   String          @db.VarChar(50)
+  version         Int
+  specification   Json?
+  isEnabled       Boolean?        @default(true)
+  isDeleted       Boolean?        @default(false)
+  createdAt       DateTime?       @default(now())
+  updatedAt       DateTime?       @db.Timestamp(6)
+  PlatApplication PlatApplication @relation(fields: [idApplication], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fkPlatComponentPlatAplication1")
+}
+
+model PlatUserClient {
+  id                String     @id @default(uuid()) @db.Uuid
+  description       String?
+  idClient          String     @db.Uuid
+  idUser            String     @db.Uuid
+  alternateUser     String?    @default("")
+  alternatePassword String?    @default("")
+  alternateFactor   String?    @default("")
+  isEnabled         Boolean?   @default(true)
+  isDeleted         Boolean?   @default(false)
+  createdAt         DateTime?  @default(now())
+  updatedAt         DateTime?  @db.Timestamp(6)
+  PlatClient        PlatClient @relation(fields: [idClient], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fkPlatUserClientPlatClient1")
+}
+
+model PlatMenuApplication {
+  id                   String               @id @default(uuid()) @db.Uuid
+  idApplication        String               @db.Uuid
+  menuGroup            String               @db.VarChar(20)
+  idParent             String?              @db.Uuid
+  optionName           String               @db.VarChar(100)
+  description          String?              @db.VarChar(200)
+  execType             String               @db.VarChar(20)
+  execCall             String?              @db.Uuid
+  execParams           String?              @db.VarChar(200)
+  menuApplicationSpecs Json?
+  isEnabled            Boolean?             @default(true)
+  isDeleted            Boolean?             @default(false)
+  createdAt            DateTime?            @default(now())
+  updatedAt            DateTime?            @db.Timestamp(6)
+  Parent               PlatMenuApplication? @relation("ParentMenu", fields: [idParent], references: [id])
+  PlatApplication      PlatApplication      @relation(fields: [idApplication], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fkPlatMenuAppPlatApplication1")
+
+  PlatMenuApplication PlatMenuApplication[] @relation("ParentMenu")
+  PlatMenuClient      PlatMenuClient[]
+}
+
+model PlatMenuClient {
+  id                  String              @id @default(uuid()) @db.Uuid
+  idMenuApplication   String              @db.Uuid
+  idClient            String              @db.Uuid
+  enableMenu          Boolean?            @default(false)
+  menuClientSpecs     Json?
+  isEnabled           Boolean?            @default(true)
+  isDeleted           Boolean?            @default(false)
+  createdAt           DateTime?           @default(now())
+  updatedAt           DateTime?           @db.Timestamp(6)
+  PlatMenuApplication PlatMenuApplication @relation(fields: [idMenuApplication], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fkPlatMenuClientPlatMenuApplication1")
+  PlatClient          PlatClient          @relation(fields: [idClient], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fkPlatMenuClientPlatClient1")
+
+  @@unique([idMenuApplication, idClient])
+}
+
+//////////////////////////////////////////////////////
+
+model PlatTIComponent {
+  id              String            @id @default(uuid()) @db.Uuid
+  componentName   String            @db.VarChar(20)
+  description     String?           @db.VarChar(200)
+  idParent        String?           @db.Uuid
+  componentSpecs  Json?
+  isEnabled       Boolean?          @default(true)
+  isDeleted       Boolean?          @default(false)
+  createdAt       DateTime?         @default(now())
+  updatedAt       DateTime?         @db.Timestamp(6)
+  Parent          PlatTIComponent?  @relation("ParentComponent", fields: [idParent], references: [id])
+  PlatTIComponent PlatTIComponent[] @relation("ParentComponent")
+}
+
+model PlatMetaDataApplication {
+  id              String          @id @default(uuid()) @db.Uuid
+  idApplication   String          @db.Uuid
+  owner           String          @db.VarChar(50)
+  tableName       String          @db.VarChar(50)
+  columnName      String          @db.VarChar(50)
+  languageCode    String          @db.VarChar(10)
+  title           String?         @db.VarChar(100)
+  description     String?         @db.VarChar(500)
+  PlatApplication PlatApplication @relation(fields: [idApplication], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fkPlatMetaDataAppPlatApplication1")
+
+  @@unique([idApplication, owner, tableName, columnName, languageCode])
+}

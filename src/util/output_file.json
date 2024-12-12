@@ -1,0 +1,420 @@
+{
+  "Module": {
+    "-version": "111020000",
+    "-xmlns": "http://xmlns.oracle.com/Forms",
+    "FormModule": {
+      "-Name": "TIPOS_ENTIDAD",
+      "-DirtyInfo": "true",
+      "-Title": "MODULO1",
+      "-MenuModule": "DEFAULT&SMARTBAR",
+      "-ConsoleWindow": "ROOT_WINDOW",
+      "Coordinate": {
+        "-CharacterCellWidth": "5",
+        "-DefaultFontScaling": "true",
+        "-CoordinateSystem": "Real",
+        "-CharacterCellHeight": "15",
+        "-RealUnit": "Point",
+        "-self-closing": "true"
+      },
+      "Block": {
+        "-Name": "TIPO_ENTIDAD",
+        "-RecordVisualAttributeGroupName": "REGISTRO_ACTIVO",
+        "-ScrollbarTabPageName": "",
+        "-QueryDataSourceName": "TIPO_ENTIDAD",
+        "-DMLDataName": "TIPO_ENTIDAD",
+        "-RecordsDisplayCount": "15",
+        "-ScrollbarYPosition": "26",
+        "-ShowScrollbar": "true",
+        "-DirtyInfo": "true",
+        "-ScrollbarCanvasName": "CANVAS2",
+        "-WhereClause": "NIT_COMPANIA = :GLOBAL.COMPANIA",
+        "-ScrollbarWidth": "11",
+        "-ScrollbarXPosition": "553",
+        "-OrderByClause": "TO_NUMBER(TIPO_ENTIDAD)",
+        "-EnforcedPrimaryKey": "true",
+        "-ScrollbarLength": "225",
+        "-LockMode": "Delayed",
+        "Item": [
+          {
+            "-Name": "TIPO_ENTIDAD",
+            "-UpdateAllowed": "true",
+            "-MaximumLength": "4",
+            "-YPosition": "27",
+            "-XPosition": "10",
+            "-ListElementCount": "2",
+            "-DataType": "Number",
+            "-ItemsDisplay": "0",
+            "-ItemType": "Text Item",
+            "-Prompt": "Tipo",
+            "-TabPageName": "",
+            "-PromptDisplayStyle": "First Record",
+            "-DirtyInfo": "true",
+            "-PromptAttachmentEdge": "Top",
+            "-Width": "23",
+            "-PromptAlign": "Center",
+            "-PrimaryKey": "true",
+            "-CanvasName": "CANVAS2",
+            "-Height": "15",
+            "-Required": "true",
+            "Trigger": {
+              "-Name": "WHEN-VALIDATE-ITEM",
+              "-TriggerText": "--&#10;-- Begin default enforce data integrity constraint SYS_C0014257 section&#10;--&#10;if not( :TIPO_ENTIDAD.TIPO_ENTIDAD IS NOT NULL ) then&#10;  message( 'WHEN-VALIDATE-ITEM trigger failed on field - ' || :system.trigger_field );&#10;  raise form_trigger_failure;&#10;end if;&#10;--&#10;-- End default enforce data integrity constraint SYS_C0014257 section&#10;--&#10;",
+              "-self-closing": "true"
+            }
+          },
+          {
+            "-Name": "NOMBRE",
+            "-MaximumLength": "60",
+            "-YPosition": "27",
+            "-XPosition": "33",
+            "-ItemsDisplay": "0",
+            "-ItemType": "Text Item",
+            "-Prompt": "Nombre",
+            "-TabPageName": "",
+            "-PromptDisplayStyle": "First Record",
+            "-DirtyInfo": "true",
+            "-PromptAttachmentEdge": "Top",
+            "-Width": "208",
+            "-PromptAlign": "Center",
+            "-CanvasName": "CANVAS2",
+            "-DataLengthSemantics": "BYTE",
+            "-Height": "15",
+            "-Required": "true",
+            "Trigger": {
+              "-Name": "WHEN-VALIDATE-ITEM",
+              "-TriggerText": "--&#10;-- Begin default enforce data integrity constraint SYS_C0014258 section&#10;--&#10;if not( :TIPO_ENTIDAD.NOMBRE IS NOT NULL ) then&#10;  message( 'WHEN-VALIDATE-ITEM trigger failed on field - ' || :system.trigger_field );&#10;  raise form_trigger_failure;&#10;end if;&#10;--&#10;-- End default enforce data integrity constraint SYS_C0014258 section&#10;--&#10;",
+              "-self-closing": "true"
+            }
+          },
+          {
+            "-Name": "TIPO_MANEJO",
+            "-MaximumLength": "10",
+            "-YPosition": "27",
+            "-XPosition": "241",
+            "-ListElementCount": "2",
+            "-ItemType": "List Item",
+            "-Prompt": "Tipo Manejo",
+            "-TabPageName": "",
+            "-PromptJustification": "Center",
+            "-DirtyInfo": "true",
+            "-PromptAttachmentEdge": "Top",
+            "-Width": "74",
+            "-ColumnName": "TIPO_MANEJO",
+            "-PromptAlign": "Center",
+            "-CanvasName": "CANVAS2",
+            "-DataLengthSemantics": "BYTE",
+            "-Height": "15",
+            "ListItemElement": [
+              {
+                "-Index": "1",
+                "-Name": "Individual",
+                "-Value": "INDIVIDUAL",
+                "-self-closing": "true"
+              },
+              {
+                "-Index": "2",
+                "-Name": "General",
+                "-Value": "GENERAL",
+                "-self-closing": "true"
+              }
+            ]
+          },
+          {
+            "-Name": "TERCERO",
+            "-MaximumLength": "16",
+            "-YPosition": "27",
+            "-XPosition": "315",
+            "-DataType": "Number",
+            "-ValidateFromList": "true",
+            "-ItemType": "Text Item",
+            "-Prompt": "Tercero",
+            "-TabPageName": "",
+            "-PromptJustification": "Center",
+            "-DirtyInfo": "true",
+            "-PromptAttachmentEdge": "Top",
+            "-Width": "68",
+            "-ColumnName": "TERCERO",
+            "-PromptAlign": "Center",
+            "-CanvasName": "CANVAS2",
+            "-LovName": "TERCEROS",
+            "-Height": "15",
+            "Trigger": {
+              "-Name": "POST-CHANGE",
+              "-TriggerText": "BEGIN&#10;&#x9;SELECT  nombre||' '||apellido_1||' '||apellido_2 nombre&#10;&#x9;INTO :NOMBRE_TERCERO&#10;&#x9;FROM tercero&#10;&#x9;WHERE TERCERO = :TERCERO&#10;&#x9;&#x9;&#x9;&#x9;AND  nit_compania = :global.compania&#10;&#x9;&#x9;&#x9;&#x9;AND  TERCERO_TYPE = :TERCERO_TYPE;&#10;EXCEPTION&#10;&#x9;WHEN OTHERS THEN NULL;&#10;END;",
+              "-DirtyInfo": "true",
+              "-self-closing": "true"
+            }
+          },
+          {
+            "-Name": "TERCERO_TYPE",
+            "-MaximumLength": "10",
+            "-Prompt": "Tercero Type",
+            "-DirtyInfo": "true",
+            "-Width": "74",
+            "-ColumnName": "TERCERO_TYPE",
+            "-DataLengthSemantics": "BYTE",
+            "-Height": "14",
+            "-ItemType": "Text Item",
+            "-self-closing": "true"
+          },
+          {
+            "-Name": "NOMBRE_TERCERO",
+            "-MaximumLength": "255",
+            "-YPosition": "27",
+            "-XPosition": "384",
+            "-ItemType": "Display Item",
+            "-Prompt": "Nombre",
+            "-TabPageName": "",
+            "-PromptJustification": "Center",
+            "-DirtyInfo": "true",
+            "-DatabaseItem": "false",
+            "-PromptAttachmentEdge": "Top",
+            "-Width": "165",
+            "-PromptAlign": "Center",
+            "-CanvasName": "CANVAS2",
+            "-Height": "15",
+            "-self-closing": "true"
+          },
+          {
+            "-Name": "NIT_COMPANIA",
+            "-MaximumLength": "15",
+            "-Prompt": "Nit Compania",
+            "-DirtyInfo": "true",
+            "-Width": "108",
+            "-ColumnName": "NIT_COMPANIA",
+            "-DataLengthSemantics": "BYTE",
+            "-Height": "14",
+            "-ItemType": "Text Item",
+            "-Required": "true",
+            "-CopyValueFromItem": "\"/",
+            "-self-closing": "true"
+          }
+        ],
+        "DataSourceColumn": [
+          {
+            "-Type": "Query",
+            "-DSCType": "NUMBER",
+            "-DSCName": "TIPO_ENTIDAD",
+            "-DSCNochildren": "false",
+            "-DSCLength": "0",
+            "-DSCMandatory": "true",
+            "-DSCPrecision": "3",
+            "-DSCScale": "0",
+            "-self-closing": "true"
+          },
+          {
+            "-Type": "Query",
+            "-DSCType": "VARCHAR2",
+            "-DSCName": "NOMBRE",
+            "-DSCNochildren": "false",
+            "-DSCLength": "60",
+            "-DSCMandatory": "true",
+            "-DSCPrecision": "0",
+            "-DSCScale": "0",
+            "-self-closing": "true"
+          },
+          {
+            "-Type": "Query",
+            "-DSCType": "VARCHAR2",
+            "-DSCName": "NIT_COMPANIA",
+            "-DSCNochildren": "false",
+            "-DSCLength": "15",
+            "-DSCMandatory": "true",
+            "-DSCPrecision": "0",
+            "-DSCScale": "0",
+            "-self-closing": "true"
+          },
+          {
+            "-Type": "Query",
+            "-DSCType": "VARCHAR2",
+            "-DSCName": "TIPO_MANEJO",
+            "-DSCNochildren": "false",
+            "-DSCLength": "10",
+            "-DSCMandatory": "false",
+            "-DSCPrecision": "0",
+            "-DSCScale": "0",
+            "-self-closing": "true"
+          },
+          {
+            "-Type": "Query",
+            "-DSCType": "NUMBER",
+            "-DSCName": "TERCERO",
+            "-DSCNochildren": "false",
+            "-DSCLength": "0",
+            "-DSCMandatory": "false",
+            "-DSCPrecision": "15",
+            "-DSCScale": "0",
+            "-self-closing": "true"
+          },
+          {
+            "-Type": "Query",
+            "-DSCType": "VARCHAR2",
+            "-DSCName": "TERCERO_TYPE",
+            "-DSCNochildren": "false",
+            "-DSCLength": "10",
+            "-DSCMandatory": "false",
+            "-DSCPrecision": "0",
+            "-DSCScale": "0",
+            "-self-closing": "true"
+          }
+        ],
+        "Trigger": [
+          {
+            "-Name": "KEY-DELREC",
+            "-TriggerText": "--&#10;-- Begin default enforce data integrity constraint TIPO_ENT_PK section&#10;--&#10;declare&#10;    cursor primary_cur is select 'x' from AFILIACIONES_ENTIDADES&#10;        where TIPO_ENTIDAD = :TIPO_ENTIDAD.TIPO_ENTIDAD;&#10;    primary_dummy  char(1);&#10;begin&#10;    if ( ( :TIPO_ENTIDAD.TIPO_ENTIDAD is not null ) ) then&#10;        open primary_cur;&#10;        fetch primary_cur into primary_dummy;&#10;        if ( primary_cur%found ) then&#10;           message('No puede borrar registro maestro cuando existen registros detalle coincidentes.');&#10;           close primary_cur;&#10;           raise form_trigger_failure;&#10;        end if;&#10;        close primary_cur;&#10;    end if;&#10;end;&#10;--&#10;-- End default enforce data integrity constraint TIPO_ENT_PK section&#10;--&#10;--&#10;-- Begin default enforce data integrity constraint TIPO_ENT_PK section&#10;--&#10;declare&#10;    cursor primary_cur is select 'x' from CONCEPTO&#10;        where TIPO_ENTIDAD = :TIPO_ENTIDAD.TIPO_ENTIDAD;&#10;    primary_dummy  char(1);&#10;begin&#10;    if ( ( :TIPO_ENTIDAD.TIPO_ENTIDAD is not null ) ) then&#10;        open primary_cur;&#10;        fetch primary_cur into primary_dummy;&#10;        if ( primary_cur%found ) then&#10;           message('No puede borrar registro maestro cuando existen registros detalle coincidentes.');&#10;           close primary_cur;&#10;           raise form_trigger_failure;&#10;        end if;&#10;        close primary_cur;&#10;    end if;&#10;end;&#10;delete_record;&#10;--&#10;-- End default enforce data integrity constraint TIPO_ENT_PK section&#10;--&#10;",
+            "-self-closing": "true"
+          },
+          {
+            "-Name": "WHEN-CREATE-RECORD",
+            "-TriggerText": ":NIT_COMPANIA := :GLOBAL.COMPANIA;",
+            "-DirtyInfo": "true",
+            "-self-closing": "true"
+          }
+        ]
+      },
+      "Canvas": {
+        "-Name": "CANVAS2",
+        "-ViewportHeight": "360",
+        "-ViewportWidth": "360",
+        "-CanvasType": "Content",
+        "-ViewportXPositionOnCanvas": "0",
+        "-DirtyInfo": "true",
+        "-ViewportYPositionOnCanvas": "0",
+        "-Width": "585",
+        "-Height": "277",
+        "-WindowName": "ROOT_WINDOW",
+        "Graphics": {
+          "-Name": "FRAME3",
+          "-YPosition": "9",
+          "-XPosition": "5",
+          "-RecordsDisplayCount": "15",
+          "-GraphicsType": "Frame",
+          "-FillPattern": "none",
+          "-ShowScrollbar": "true",
+          "-Bevel": "Inset",
+          "-DirtyInfo": "true",
+          "-UpdateLayout": "Manually",
+          "-Width": "563",
+          "-ScrollbarWidth": "9",
+          "-Height": "249",
+          "-EdgePattern": "solid",
+          "-GraphicsFontColorCode": "0",
+          "-GraphicsFontColor": "",
+          "-EdgeBackColor": "white",
+          "-FrameTitleOffset": "9",
+          "-FrameTitle": "Tipos de Entidades",
+          "-FrameTitleSpacing": "5",
+          "-LayoutStyle": "Tabular",
+          "-VerticalMargin": "15",
+          "-HorizontalMargin": "5",
+          "-GraphicsText": "",
+          "-HorizontalObjectOffset": "0",
+          "-LayoutDataBlockName": "TIPO_ENTIDAD",
+          "-StartPromptOffset": "5",
+          "-GraphicsFontName": "",
+          "-GraphicsFontStyle": "0",
+          "-GraphicsFontWeight": "Ultralight",
+          "-GraphicsFontSize": "0",
+          "-GraphicsFontSpacing": "Ultradense",
+          "-self-closing": "true"
+        }
+      },
+      "LOV": {
+        "-Name": "TERCEROS",
+        "-YPosition": "40",
+        "-XPosition": "40",
+        "-DirtyInfo": "true",
+        "-Width": "520",
+        "-RecordGroupName": "TERCEROS",
+        "-AutoColumnWidth": "true",
+        "-Title": "Terceros",
+        "-Height": "380",
+        "LOVColumnMapping": [
+          {
+            "-Name": "TERCERO",
+            "-DirtyInfo": "true",
+            "-Title": "Tercero",
+            "-DisplayWidth": "65",
+            "-ReturnItem": "TIPO_ENTIDAD.TERCERO",
+            "-self-closing": "true"
+          },
+          {
+            "-Name": "NOMBRE",
+            "-DirtyInfo": "true",
+            "-Title": "Nombre",
+            "-DisplayWidth": "250",
+            "-ReturnItem": "TIPO_ENTIDAD.NOMBRE_TERCERO",
+            "-self-closing": "true"
+          },
+          {
+            "-Name": "TERCERO_TYPE",
+            "-DirtyInfo": "true",
+            "-Title": "Tercero_Type",
+            "-DisplayWidth": "60",
+            "-ReturnItem": "TIPO_ENTIDAD.TERCERO_TYPE",
+            "-self-closing": "true"
+          }
+        ]
+      },
+      "RecordGroup": {
+        "-Name": "TERCEROS",
+        "-DirtyInfo": "true",
+        "-RecordGroupType": "Query",
+        "-RecordGroupQuery": "SELECT tercero, nombre||' '||apellido_1||' '||apellido_2 nombre ,tercero_type&#10;FROM tercero&#10;WHERE TERCERO <> 0&#10;AND   nit_compania = :global.compania&#10;AND   TERCERO_TYPE <> 'CLIENTES'&#10;order by 2",
+        "-RecordGroupFetchSize": "0",
+        "RecordGroupColumn": [
+          {
+            "-Name": "TERCERO",
+            "-MaximumLength": "23",
+            "-DirtyInfo": "true",
+            "-ColumnDataType": "Number",
+            "-self-closing": "true"
+          },
+          {
+            "-Name": "NOMBRE",
+            "-MaximumLength": "192",
+            "-DirtyInfo": "true",
+            "-ColumnDataType": "Character",
+            "-self-closing": "true"
+          },
+          {
+            "-Name": "TERCERO_TYPE",
+            "-MaximumLength": "10",
+            "-DirtyInfo": "true",
+            "-ColumnDataType": "Character",
+            "-self-closing": "true"
+          }
+        ]
+      },
+      "Trigger": {
+        "-Name": "WHEN-NEW-FORM-INSTANCE",
+        "-TriggerText": "EXECUTE_QUERY;",
+        "-self-closing": "true"
+      },
+      "VisualAttribute": [
+        {
+          "-Name": "ITEM_ACTIVO",
+          "-BackColor": "White",
+          "-ForegroundColor": "blue",
+          "-FillPattern": "transparent",
+          "-self-closing": "true"
+        },
+        {
+          "-Name": "REGISTRO_ACTIVO",
+          "-BackColor": "white",
+          "-ForegroundColor": "red",
+          "-FillPattern": "transparent",
+          "-self-closing": "true"
+        }
+      ],
+      "Window": {
+        "-Name": "ROOT_WINDOW",
+        "-DirtyInfo": "true",
+        "-Width": "578",
+        "-Title": "Tipos de Entidades",
+        "-Height": "268",
+        "-self-closing": "true"
+      }
+    }
+  }
+}
