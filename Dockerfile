@@ -1,34 +1,37 @@
-FROM node:latest
+FROM node:16-alpine3.16
 
-ARG CORS_ORIGINS
-ENV CORS_ORIGINS=${CORS_ORIGINS}
+ENV CORS_ORIGINS='"*"'
 
-ARG DATABASE_URL
-RUN test -n "$DATABASE_URL" || (echo 'please pass in --build-arg DATABASE_URL' && exit 1)
-ENV DATABASE_URL=${DATABASE_URL}
+ENV DATABASE_URL="postgresql://synchrox_local:synchrox2020@new.siifweb.com:7432/apps2?schema=public"
 
-ARG JWT_SECRET
-RUN test -n "$JWT_SECRET" || (echo 'please pass in --build-arg JWT_SECRET' && exit 1)
-ENV JWT_SECRET=${JWT_SECRET}
+#ENV JWT_SECRET=J12wAI6wPZZez3N0oN56XNgVvGSSs3BM
 
-ARG BRANCH_NAME
-ENV BRANCH_NAME=${BRANCH_NAME:-development}
+ENV JWT_SECRET=TylMQ1NrleSu3yD3YWDrIDP9WgHUBpsXM
 
-ARG USERS_API_URL
-ENV USERS_API_URL=${USERS_API_URL}
+#ENV USERS_API_URL=https://users.dev.synchrox.com
+ENV USERS_API_URL=http://new.siifweb.com:6413
+
+ENV LAUNCH_SECRET=AnyTHing
+
+ENV BRANCH_NAME=development
+
+ENV PORT=6429
+
 
 WORKDIR /app
 COPY package*.json ./
 COPY prisma ./
 RUN npm install
+RUN npx browserslist@latest --update-db
 
 # Prisma migrate deploy
-RUN npx prisma migrate deploy
+#RUN npx prisma migrate dev
 
 # Prisma Client
 RUN npx prisma generate
 
 COPY . .
 
-EXPOSE 80
-ENTRYPOINT npm run start
+EXPOSE 6429
+ENTRYPOINT npm run dev
+#RUN npm run dev

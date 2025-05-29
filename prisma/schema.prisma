@@ -24,6 +24,7 @@ model PlatApplication {
   PlatMenuApp               PlatMenuApplication[]
   PlatMetaDataApplication   PlatMetaDataApplication[]
   PlatApplicationPrivileges PlatApplicationPrivileges[]
+  PlatCompany               PlatCompany?                @relation(fields: [idCompany], references: [id])
 }
 
 model PlatApplicationPrivileges {
@@ -55,6 +56,7 @@ model PlatClient {
   PlatApplication PlatApplication  @relation(fields: [idApplication], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fkPlatClientPlatApplication1")
   PlatUserClient  PlatUserClient[]
   PlatMenuClient  PlatMenuClient[]
+  PlatCompany     PlatCompany?     @relation("PlatCompanyToPlatClient", fields: [idCompany], references: [id])
 }
 
 model PlatComponent {
@@ -85,6 +87,7 @@ model PlatUserClient {
   createdAt         DateTime?  @default(now())
   updatedAt         DateTime?  @db.Timestamp(6)
   PlatClient        PlatClient @relation(fields: [idClient], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fkPlatUserClientPlatClient1")
+  PlatUser         PlatUser           @relation("PlatUserToPlatUserClient", fields: [idUser], references: [id], onDelete: NoAction, onUpdate: NoAction)
 }
 
 model PlatMenuApplication {
@@ -153,4 +156,38 @@ model PlatMetaDataApplication {
   PlatApplication PlatApplication @relation(fields: [idApplication], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fkPlatMetaDataAppPlatApplication1")
 
   @@unique([idApplication, owner, tableName, columnName, languageCode])
+}
+
+model PlatUser {
+  id                String             @id @default(uuid()) @db.Uuid
+  username          String             @db.VarChar(50)
+  email             String?            @db.VarChar(100)
+  fullName          String?            @db.VarChar(100)
+  password           String?            @db.VarChar(255) // Para autenticación local
+  authProvider       String?            @db.VarChar(50)  // Ej: 'local', 'google'
+  providerId         String?            @db.VarChar(100) // ID del usuario en el proveedor externo
+  providerData       Json?              // Información adicional del proveedor externo (tokens, perfil, etc)
+  lastLoginAt        DateTime?          // Último acceso
+  userSpecs         Json?
+  isEnabled         Boolean?           @default(true)
+  isDeleted         Boolean?           @default(false)
+  createdAt         DateTime?          @default(now())
+  updatedAt         DateTime?          @db.Timestamp(6)
+  
+  PlatUserClient    PlatUserClient[]   @relation("PlatUserToPlatUserClient")
+}
+
+model PlatCompany {
+  id                String             @id @default(uuid()) @db.Uuid
+  name              String             @db.VarChar(100)
+  description       String?            @db.VarChar(200)
+  urlLogo           String?            @db.VarChar(245)
+  urlMain           String?            @db.VarChar(245)
+  companySpecs      Json?
+  isEnabled         Boolean?           @default(true)
+  isDeleted         Boolean?           @default(false)
+  createdAt         DateTime?          @default(now())
+  updatedAt         DateTime?          @db.Timestamp(6)
+  PlatApplication   PlatApplication[]
+  PlatClient        PlatClient[]       @relation("PlatCompanyToPlatClient")
 }

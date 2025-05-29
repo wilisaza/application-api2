@@ -16,6 +16,10 @@ import { metaDataRouter } from '../routes/metaData.routes.js'
 
 import { tIComponentRouter } from '../routes/tIComponent.routes.js'
 
+import authRouter from '../routes/auth.routes.js'
+import userRouter from '../routes/user.routes.js'
+import companyRouter from '../routes/company.routes.js'
+
 import logger from '../util/logger.js'
 
 //Requiere Cors por funcion fetch desde React
@@ -39,6 +43,9 @@ app.use('/component', componentRouter)
 app.use('/menuApp', menuRouter)
 app.use('/metaData', metaDataRouter)
 app.use('/tIComponent', tIComponentRouter)
+app.use('/auth', authRouter)
+app.use('/user', userRouter)
+app.use('/company', companyRouter)
 
 app.get('/healthCheck', function (req, res) {
   res.status(200).json({
