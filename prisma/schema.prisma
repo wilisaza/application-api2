@@ -44,7 +44,6 @@ model PlatApplicationPrivileges {
 
 model PlatClient {
   id              String           @id @default(uuid()) @db.Uuid
-  shortName       String?          @db.VarChar(45)
   description     String?
   idApplication   String           @db.Uuid
   idCompany       String           @db.Uuid
@@ -179,6 +178,7 @@ model PlatUser {
 
 model PlatCompany {
   id                String             @id @default(uuid()) @db.Uuid
+  shortName         String             @unique @db.VarChar(45)
   name              String             @db.VarChar(100)
   description       String?            @db.VarChar(200)
   urlLogo           String?            @db.VarChar(245)

@@ -39,15 +39,15 @@ export const getAppCriteria = async (app, criteria) => {
   const fName = `${libName} [getAppCriteria]`
 
   let data
-  if (!keyExists(app.params,'id')) {
+  if (!keyExists(app.params, 'id')) {
     const error = `${fName} No id criteria`
     logger.error(error)
     return {
       success: false,
-      error
+      error,
     }
   }
-  
+
   try {
     logger.info(`${fName} Obteniendo [${criteria}]: ${app}`)
     data = await prisma.PlatApplication.findMany({
@@ -68,22 +68,21 @@ export const getAppCriteria = async (app, criteria) => {
       error,
     }
   }
-
 }
 
 export const getAppCli = async (app) => {
   const fName = `${libName} [getAppCli]`
 
   let data
-  if (!keyExists(app.params,'id')) {
+  if (!keyExists(app.params, 'id')) {
     const error = `${fName} No id`
     logger.error(error)
     return {
       success: false,
-      error
+      error,
     }
   }
-  
+
   try {
     logger.info(`${fName} Obteniendo app: ${app}`)
     data = await prisma.PlatApplication.findMany({
@@ -115,37 +114,45 @@ export const getAppShortN = async (app) => {
 
   let data
 
-  if (!keyExists(app.params,'shortName')) {
+  if (!keyExists(app.params, 'shortName')) {
     const error = `${fName} No shortName`
     logger.error(error)
     return {
       success: false,
-      error
+      error,
     }
   }
- 
+
   try {
     logger.info(`${fName} Obteniendo app: ${app.params.shortName}`)
     data = await prisma.PlatApplication.findMany({
       where: {
         shortName: app.params.shortName,
       },
-      select:{
+      select: {
         id: true,
         shortName: true,
         fullName: true,
         urlLogo: true,
         urlMain: true,
         applicationSpecs: true,
-        PlatClient:{
-          select:{
+        PlatClient: {
+          select: {
             id: true,
             description: true,
             idCompany: true,
-            clientSpecs: true
-          }
-        }
-      }
+            clientSpecs: true,
+            PlatCompany: {
+              select: {
+                shortName: true,
+                name: true,
+                description: true,
+                urlLogo: true,
+              },
+            },
+          },
+        },
+      },
     })
     logger.info(`${fName} Obtenido`)
     return {
@@ -165,20 +172,20 @@ export const getAppShortN = async (app) => {
 export const getAppShortNCli = async (app) => {
   const fName = `${libName} [getAppShortNCli]`
   let data
-  if (!keyExists(app.params,'shortName')) {
+  if (!keyExists(app.params, 'shortName')) {
     const error = `${fName} No shortName`
     logger.error(error)
     return {
       success: false,
-      error
+      error,
     }
   }
-  if (!keyExists(app.params,'shortClient')) {
+  if (!keyExists(app.params, 'shortClient')) {
     const error = `${fName} No shorClient`
     logger.error(error)
     return {
       success: false,
-      error
+      error,
     }
   }
 
@@ -187,26 +194,43 @@ export const getAppShortNCli = async (app) => {
     data = await prisma.PlatApplication.findMany({
       where: {
         shortName: app.params.shortName,
+        PlatClient: {
+          some: {
+            PlatCompany: {
+              shortName: app.params.shortClient,
+            },
+          },
+        },
       },
-      select:{
+      select: {
         id: true,
         shortName: true,
         fullName: true,
         urlLogo: true,
         urlMain: true,
         applicationSpecs: true,
-        PlatClient:{
-          where:{
-            shortName: app.params.shortClient
+        PlatClient: {
+          where: {
+            PlatCompany: {
+              shortName: app.params.shortClient,
+            },
           },
-          select:{
+          select: {
             id: true,
             description: true,
             idCompany: true,
-            clientSpecs: true
-          }
-        }
-      }
+            clientSpecs: true,
+            PlatCompany: {
+              select: {
+                shortName: true,
+                name: true,
+                description: true,
+                urlLogo: true,
+              },
+            },
+          },
+        },
+      },
     })
     if (data[0].PlatClient?.length === 0) {
       logger.error(`${fName} No client info`)
@@ -215,32 +239,13 @@ export const getAppShortNCli = async (app) => {
         error: 'No client info',
       }
     }
-    data[0].clientDescription = data[0].PlatClient[0].description
+    data[0].clientDescription = data[0].PlatClient[0].PlatCompany
+    data[0].clientDescription.idClient = data[0].PlatClient[0].id
     data[0].launchSpecs = { ...data[0].applicationSpecs, ...data[0].PlatClient[0].clientSpecs }
     delete data[0].applicationSpecs
     delete data[0].PlatClient
 
-    if (data[0].launchSpecs?.launcher.launchType === 'COMPONENT') {
-      let compSpecs = await getComp({ params: { id: data[0].launchSpecs.launcher.idLaunch } })
-      if (!compSpecs?.success ) {
-        logger.error(`${fName}-getComp Error al obtener estructura del componente inicial`)
-        return {
-          success: false,
-          error: 'Error al obtener estructura del componente inicial',
-        }
-      }
-      if (compSpecs.data.length === 0) {
-        logger.error(`${fName}-getComp No se encontró la estructura del componente inicial`)
-        return {
-          success: false,
-          error: 'No se encontró la estructura del componente inicial',
-        }
-      }
-      data[0].launchSpecs.launcher.componentType = compSpecs.data[0].componentType
-      data[0].launchSpecs.launcher.componentSpecs = compSpecs.data[0].specification
-    }
-
-    logger.info(`${fName} Success`)
+    logger.info(`${fName} Obtenido`)
     return {
       success: true,
       data,
@@ -259,12 +264,12 @@ export const getAppUsr = async (app) => {
   const fName = `${libName} [getAppUsr]`
 
   let data
-  if (!keyExists(app.params,'id')) {
+  if (!keyExists(app.params, 'id')) {
     const error = `${fName} No id`
     logger.error(error)
     return {
       success: false,
-      error
+      error,
     }
   }
 
@@ -303,29 +308,28 @@ export const getAppUsr = async (app) => {
       error,
     }
   }
-
 }
 
 export const getAppUsrCli = async (app) => {
   const fName = `${libName} [getAppUsrCli]`
 
   let data
-  
-  if (!keyExists(app.params,'idUser')) {
+
+  if (!keyExists(app.params, 'idUser')) {
     const error = `${fName} No idUser`
     logger.error(error)
     return {
       success: false,
-      error
+      error,
     }
   }
 
-  if (!keyExists(app.params,'idCompany')) {
+  if (!keyExists(app.params, 'idCompany')) {
     const error = `${fName} No idCompany`
     logger.error(error)
     return {
       success: false,
-      error
+      error,
     }
   }
 
@@ -363,7 +367,6 @@ export const getAppUsrCli = async (app) => {
       error,
     }
   }
-  
 }
 
 export const getAppEst = async (app) => {
@@ -371,15 +374,15 @@ export const getAppEst = async (app) => {
   logger.info(`${fName} Iniciando`)
 
   let data = {}
-  if (!keyExists(app.params,'id')) {
+  if (!keyExists(app.params, 'id')) {
     const error = `${fName} No id`
     logger.error(error)
     return {
       success: false,
-      error
+      error,
     }
   }
- 
+
   //Componentes
   let ret = await getCompApp(app)
 
@@ -421,15 +424,15 @@ export const getAppRunnerEst = async (app) => {
   const fName = `${libName} [getAppRunnerEst]`
 
   let data = {}
-  if (!keyExists(app.params,'id')) {
+  if (!keyExists(app.params, 'id')) {
     const error = `${fName} No id`
     logger.error(error)
     return {
       success: false,
-      error
+      error,
     }
   }
-  
+
   try {
     logger.info(`${fName} Obteniendo appRunnerEst: ${app}`)
     data = await prisma.PlatApplication.findUnique({
@@ -511,13 +514,13 @@ export const postAppLaunch = async (app) => {
 
 export const putApp = async (app) => {
   const fName = `${libName} [postApp]`
-  
-  if (!keyExists(app.params,'id')) {
+
+  if (!keyExists(app.params, 'id')) {
     const error = `${fName} No id`
     logger.error(error)
     return {
       success: false,
-      error
+      error,
     }
   }
 
