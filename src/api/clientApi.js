@@ -1,5 +1,6 @@
 import { PrismaClient } from '@prisma/client'
 import logger from '../util/logger'
+import { use } from 'passport'
 
 const prisma = new PrismaClient()
 
@@ -31,7 +32,7 @@ export const getAltCliUsr = async (usr) => {
             description: true,
             idApplication: true,
             idCompany: true,
-            clientSpecs: true
+            clientSpecs: true,
           },
         },
       },
@@ -133,6 +134,49 @@ export const getCliUsr = async (cli) => {
     return {
       success: true,
       data: data.concat(data2),
+    }
+  } catch (error) {
+    logger.error(`${fName} Error al obtener informacion de la base de datos`)
+    console.error(error)
+    return {
+      success: false,
+      error,
+    }
+  }
+}
+
+export const getNoPlatUsr = async (cli) => {
+  const fName = `${libName} [getNoPlatUsr]`
+
+  if (!cli?.params?.idClient) {
+    return {
+      success: false,
+      error: 'No idClient',
+    }
+  }
+  let data
+
+  try {
+    logger.info(`${fName} Validando usuario NoPlat: ${cli.params.idClient}`)
+    data = await prisma.PlatUserClient.findMany({
+      where: {
+        idClient: cli.params.idClient,
+        PlatUser: {
+          username: 'noplatuser',
+        },
+      },
+      select: {
+        PlatUser: {
+          select: {
+            id: true,
+          },
+        },
+      },
+    })
+    logger.info(`${fName} Obtenido`)
+    return {
+      success: true,
+      data,
     }
   } catch (error) {
     logger.error(`${fName} Error al obtener informacion de la base de datos`)

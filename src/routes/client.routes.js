@@ -1,9 +1,6 @@
 import { Router } from 'express'
 
-import {
-  validateTokenFull,
-  validateTokenSingle,
-} from '../middlewares/jwtValidate.js'
+import { validateTokenFull, validateTokenSingle } from '../middlewares/jwtValidate.js'
 
 export const clientRouter = Router()
 
@@ -13,6 +10,8 @@ clientRouter.get('/alternateUser/:altUser', cliController.getAltCliUser) //compa
 
 clientRouter.get('/user/:id', validateTokenFull, cliController.getCliUser) //compañias por usuario
 
-clientRouter.post('/', validateTokenSingle, cliController.postClient,)
+clientRouter.get('/noPlatUser/:idClient', cliController.getNoPlatUser) //el cliente posee gestión de usuarios no plataforma
 
-clientRouter.post('/userclient', validateTokenSingle, cliController.postUserClient,)
+clientRouter.post('/', validateTokenSingle, cliController.postClient)
+
+clientRouter.post('/userclient', validateTokenSingle, cliController.postUserClient)

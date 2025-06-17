@@ -1,5 +1,5 @@
 import express from 'express'
-import { loginLocal, loginGoogle } from '../controllers/auth.controller.js'
+import { loginLocal, loginGoogle, loginDb } from '../controllers/auth.controller.js'
 
 const router = express.Router()
 
@@ -7,5 +7,7 @@ const router = express.Router()
 router.post('/login', loginLocal)
 // Login con Google
 router.post('/google', loginGoogle)
+// Login con usuario DB
+router.post('/db', loginDb)
 
 export default router

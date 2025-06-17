@@ -1,24 +1,28 @@
-
-import { getAltCliUsr, getCliUsr, postCli, postUsrCli } from '../api/clientApi.js'
+import { getAltCliUsr, getCliUsr, getNoPlatUsr, postCli, postUsrCli } from '../api/clientApi.js'
 
 export const cliController = {
-  getAltCliUser : async (req, res) => {
+  getAltCliUser: async (req, res) => {
     let outData = await getAltCliUsr(req)
     res.json(outData)
   },
 
-  getCliUser : async (req, res) => {
+  getCliUser: async (req, res) => {
     let outData = await getCliUsr(req)
     res.json(outData)
   },
 
-  postClient : async (req, res) => {
+  getNoPlatUser: async (req, res) => {
+    let outData = await getNoPlatUsr(req)
+    res.json(outData)
+  },
+
+  postClient: async (req, res) => {
     let outData = await postCli(req)
     res.json(outData)
   },
 
-  postUserClient : async (req, res) => {
+  postUserClient: async (req, res) => {
     let outData = await postUsrCli(req)
     res.json(outData)
-  }
+  },
 }
